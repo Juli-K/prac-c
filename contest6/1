@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void)
+{
+    FILE *f = fopen("input.txt", "r");
+    char c;
+    int word = 0, sent = 0, phar = 0;
+    while (fscanf(f, "%c", &c) == 1)
+    {
+        while(c != '\n')
+        {
+            if (c == ' ')
+                word++;
+            if (c == '-')
+                word--;
+            
+        }
+        word++;
+    }
+    return 0;
+}
