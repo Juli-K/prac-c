@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+int x;
+char s[9000005];
+int str( const void *p1, const void *p2)
+{
+    char *s1 = *((char**)p1);
+    char *s2 = *((char**)p2);
+    int i = 0;
+    while (s2[i] != '\0' && s1[i] != '\0')
+    {
+        if (s1[i] >= 'A' && s1[i] <= 'Z' && s2[i] >= 'A' && s2[i] <= 'Z')
+        {
+            if (s1[i] > s2[i] )
+                return 1;
+           if (s1[i]  < s2[i] )
+                return -1;
+        }
+        if (s1[i]>= 'a' && s1[i] <= 'z' && s2[i] >= 'a' && s2[i] <= 'z')
+        {
+            if (s1[i] > s2[i])
+                return 1;
+            if (s1[i]  < s2[i])
+                return -1;
+
+        }
+        if (s1[i]  >= 'A' && s1[i]  <= 'Z' && s2[i] >= 'a' && s2[i] <= 'z')
+            return 1;
+       if (s1[i] >= 'a' && s1[i]  <= 'z' && s2[i] >= 'A' && s2[i] <= 'Z')
+            return -1;
+        i++;
+    }
+    
+    if (s1[i]  == '\0' && s2[i] != '\0')
+        return -1;
+    if (s2[i] == '\0' && s1[i] != '\0')
+        return 1;
+    return 0;
+}
+void sort(char *p[], int n)
+{
+
+    qsort(p, n, sizeof(char*), str);
+    for (int i = 0; i < n; i++)
+        printf ("%s", p[i]);
+
+}
+int main(void)
+{
+    int n;
+    scanf("%d\n", &n);
+    x = n;
+    char **p;
+    p = calloc(n, sizeof(char*));
+    int i = 0, len;
+    while(i < n)
+    {
+        fgets(s, 9000005, stdin);
+        len = strlen(s) + 1;
+        p[i] = calloc(len, sizeof(char));
+        for (int j = 0; j < len; j++)
+            p[i][j] = s[j];
+    }
+    qsort(p, n, sizeof(char*), str);
+    for (int i = 0; i < n; i++)
+        printf ("%s", p[i]);
+    for (int i = 0; i < n; i++)
+        free(p[i]);
+    free(p);
+    return 0;
+}
