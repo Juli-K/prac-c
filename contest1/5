@@ -1,0 +1,13 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void)
+{
+    unsigned int n, k, tmp, rez;
+    scanf ("%u %u", &n, &k);
+    tmp = n << (32-k);
+    n>>= k;
+    rez = n|tmp;
+    printf ("%u", rez);
+    return 0;
+}
