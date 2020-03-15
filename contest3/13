@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+void print(int num, int l)
+{
+    int a[l];
+    for (int j = 0; j < l; j++)
+    {
+        a[j] = j;
+        printf ("%d ", a[j]);
+    }
+    printf("\n");
+    while (a[0] != num - l)
+    {
+        for (int j = 1; j <= l; j++)
+        {
+            if (a[l - j] != num - j)
+            {
+                a[l - j]++;
+                for (int i = l - j + 1; i < l ; i++)
+                    a[i] = a[i - 1] + 1;
+                break;
+            }
+        }
+        for (int j = 0; j < l; j++)
+            printf ("%d ", a[j]);
+        printf("\n");
+
+
+    }
+    return ;
+}
+
+int main(void)
+{
+    int n, k;
+    scanf ("%d%d", &n, &k);
+    print(n, k);
+    return 0;
+}
