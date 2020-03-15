@@ -1,0 +1,35 @@
+#include <signal.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <signal.h>
+#include <stdlib.h>
+int flag = 0;
+void
+handler(int s) {
+    if (s == SIGINT) {
+        flag = 0;
+    } else if (s == SIGQUIT) {
+        flag = 1;
+    }
+}
+int
+main(int argc, const char * argv[]) {
+    sigaction(SIGINT, &(struct sigaction) { .sa_handler = handler, .sa_flags = SA_RESTART }, NULL);
+    sigaction(SIGQUIT, &(struct sigaction) { .sa_handler = handler, .sa_flags = SA_RESTART }, NULL);
+    printf("%d\n", getpid());
+    fflush(stdout);
+    unsigned int res = 0;
+    int n;
+    while (scanf("%d", &n) == 1) {
+        if (!flag) {
+            res += n;
+            printf("%d\n", res);
+            fflush(stdout);
+        } else {
+            res *= n;
+            printf("%d\n", res);
+            fflush(stdout);
+        }
+    }
+    return 0;
+}
