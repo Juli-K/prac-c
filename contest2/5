@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void)
+{
+    int n, flag = 0;
+    scanf ("%d", &n);
+    float r[n], x[n], y[n], z[n];
+    for (int i = 0; i < n; i++)
+        scanf ("%f%f%f%f", &x[i], &y[i], &z[i], &r[i]);
+    for (int i = 0; i < n; i++)
+        for (int j = i + 1; j < n; j++)
+        {
+            if ((x[i] - x[j]) * (x[i] - x[j]) + (y[i] - y[j]) * (y[i] - y[j]) + (z[i] - z[j]) * (z[i] - z[j]) <= (r[i] + r[j]) * (r[i] + r[j]))
+                flag = 1;
+        }
+    if (flag == 0)
+        printf ("NO");
+    else printf ("YES");
+    return 0;
+}
