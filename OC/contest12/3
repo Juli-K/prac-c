@@ -1,0 +1,71 @@
+#include <unistd.h>
+#include <stdlib.h>
+#include <sys/wait.h>
+#include <sys/types.h>
+#include <stdio.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
+
+struct Msg
+{
+    long type;
+    long long v1, v2;
+};
+
+int
+main(int argc, const char * argv[]) {
+    if (argc != 6) {
+        exit(1);
+    }
+    key_t key;
+    long long n;
+    long long value1, value2, maxval;
+    sscanf(argv[1], "%d", &key);
+    sscanf(argv[2], "%lld", &n);
+    sscanf(argv[3], "%lld", &value1);
+    sscanf(argv[4], "%lld", &value2);
+    sscanf(argv[5], "%lld", &maxval);
+    int id;
+    id = msgget(key, 0666 | IPC_CREAT);
+    for (int i = 0; i < n; i++) {
+        int pid = fork();
+        if (pid < 0) {
+            msgctl(id, IPC_RMID, NULL);
+            while (wait(NULL) != -1);
+            exit(1);
+        }
+        if (!pid) {
+            while (1) {
+                struct Msg m;
+                if (msgrcv(id, &m, sizeof(m) - sizeof(m.type), i + 1, 0) < 0) {
+                    exit(0);
+                }
+                long long v3 = m.v1 + m.v2;
+                printf("%d %lld\n", i, v3);
+                fflush(stdout);
+                if (v3 > maxval) {
+                    exit(0);
+                } else {
+                    m.type = v3 % n + 1;
+                    m.v1 = m.v2;
+                    m.v2 = v3;
+                    if (msgsnd(id, &m, sizeof(m) - sizeof(m.type), 0) < 0) {
+                        exit(1);
+                    }
+                }
+            }
+        }
+    }
+    struct Msg ms;
+    ms.type = 1;
+    ms.v1 = value1;
+    ms.v2 = value2;
+    if (msgsnd(id, &ms, sizeof(ms) - sizeof(ms.type), 0) < 0) {
+        exit(1);
+    }
+    wait(NULL);
+    msgctl(id, IPC_RMID, NULL);
+    while (wait(NULL) != -1);
+    return 0;
+}
+
