@@ -1,0 +1,77 @@
+#include <unistd.h>
+#include <stdio.h>
+#include <fcntl.h>
+#include <signal.h>
+#include <sys/wait.h>
+#include <stdlib.h>
+
+int fd[2], pid1, pid2, n, count = 1;
+FILE *fr, *fw;
+
+void
+handler(int num) {
+    signal(SIGUSR1, handler);
+    fscanf(fr, "%d", &count);
+    int pid;
+    fscanf(fr, "%d", &pid);
+    if (count < n) {
+        if (getpid() > pid) {
+            printf("2 %d\n", count);
+        } else {
+            printf("1 %d\n", count);
+        }
+        fflush(stdout);
+        count++;
+        fprintf(fw, "%d\n", count);
+        fprintf(fw, "%d\n", getpid());
+        fflush(fw);
+        kill(pid, SIGUSR1);
+    } else {
+        fclose(fw);
+        fclose(fr);
+        close(fd[0]);
+        close(fd[1]);
+        kill(pid, SIGUSR1);
+        _exit(1);
+    }
+}
+int
+main(int argc, const char * argv[]) {
+    signal(SIGUSR1, handler);
+    sscanf(argv[1], "%d", &n);
+    pipe(fd);
+    fr = fdopen(fd[0], "r");
+    fw = fdopen(fd[1], "w");
+    if (!(pid1 = fork())) {
+        while(1) {
+            pause();
+        }
+    }
+    if (!(pid2 = fork())) {
+        while(1) {
+            pause();
+        }
+    }
+    fprintf(fw, "%d\n", count);
+    fflush(fw);
+    fprintf(fw, "%d\n", pid2);
+    fflush(fw);
+    fclose(fr);
+    close(fd[0]);
+    kill(pid1, SIGUSR1);
+    int i = 0;
+    while (wait(NULL) != -1) {
+        if (!i) {
+            fprintf(fw, "%d\n", n);
+            fflush(fw);
+            fprintf(fw, "%d\n", pid2);
+            fflush(fw);
+        }
+        i++;
+    }
+    fclose(fw);
+    close(fd[1]);
+    printf("Done\n");
+    fflush(stdout);
+    return 0;
+}
