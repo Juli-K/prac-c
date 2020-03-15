@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void symmetry(unsigned int n, int sumx, int sumy)
+{
+    int x, y;
+    if (n == 0)
+    {
+        if (sumx == 0 && sumy == 0)
+            printf ("Yes");
+        else printf ("No");
+        return ;
+    }
+    else
+    {
+        scanf("%d%d", &x, &y);
+        n -= 1;
+        if (x > 0)
+        {
+            sumx ^= x;
+            sumy ^= y;
+        }
+        else if (x < 0)
+        {
+            sumx ^= ~(x - 1);
+            sumy ^= y;
+        }
+        symmetry(n, sumx, sumy);
+
+    }
+}
+
+int main(void)
+{
+    unsigned n;
+    scanf ("%u", &n);
+    int xor_x = 0, xor_y = 0;
+    symmetry(n, xor_x, xor_y);
+    return 0;
+}
