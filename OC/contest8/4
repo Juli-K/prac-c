@@ -1,0 +1,26 @@
+
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
+
+int
+main(int argc, const char * argv[]) {
+    if (argc != 2) {
+        return 1;
+    }
+    int n;
+    sscanf(argv[1], "%d", &n);
+    for (int i = 1; i <= n; i++) {
+        printf("%d ", i);
+        if (i == n) {
+            return 0;
+        }
+        fflush(stdout);
+        int pid = fork();
+        if (pid > 0) {
+            wait(NULL);
+            return 0;
+        }
+    }
+    return 0;
+}
