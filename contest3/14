@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+short ferz(char name, short num, char lname, short lnum)
+{
+    short check;
+    if (abs(name - lname) == 0 || abs(num - lnum) == 0 || abs(name - lname) == abs(num - lnum))
+        check = 0;
+    else
+        check = 1;
+    return check;
+}
+
+short horse(char name, short num, char lname, short lnum)
+{
+    short check;
+    if ((abs(name - lname) == 2 && abs(num - lnum) == 1) || (abs(name - lname) == 1 && abs(num - lnum) == 2))
+        check = 0;
+    else
+        check = 1;
+    return check;
+}
+
+int main(void)
+{
+    char c, last_c = 'A';
+    short n, flag = 2, last_n = 1;
+    scanf ("%c%hi\n", &c, &n);
+    short rez;
+    while (c != 'X')
+    {
+        if (c == last_c && n == last_n){
+            printf ("Cheaters");
+            return 0;
+        }
+        if(last_n == 8 && last_c == 'H'){
+            printf ("Cheaters");
+            return 0;
+        }
+        if (flag == 1)
+        {
+            rez = ferz(c, n, last_c, last_n);
+            flag = 2;
+        }
+        else if (flag == 2)
+        {
+            rez = horse(c, n, last_c, last_n);
+            flag = 1;
+            
+        }
+        if (rez == 1)
+        {
+            printf ("Cheaters");
+            return 0;
+        }
+        
+        last_c = c;
+        last_n = n;
+        scanf ("%c", &c);
+        if (c != 'X')
+            scanf ("%hi\n", &n);
+        
+    }
+    
+    if (last_c != 'H' || n != 8)
+        printf ("Cheaters");
+    else if (flag == 2)
+        printf ("Tolik");
+    else if (flag == 1)
+        printf ("Garik");
+    return 0;
+}
