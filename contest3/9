@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+void cord(float x1, float y1, float x2, float y2, float n)
+{
+    float x, y;
+    x = (x1 + x2 * n) / (1 + n);
+    y = (y1 + y2 * n) / (1 + n);
+    printf ("%0.5f %0.5f\n", x, y);
+
+}
+int main(void)
+{
+    float x1, x2, x3, y1, y2, y3;
+    scanf ("%f%f%f%f%f%f", &x1, &y1, &x2, &y2, &x3, &y3);
+    float a, b, c, n_a, n_b, n_c;
+    a = (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
+    b = (x2 - x3) * (x2 - x3) + (y2 - y3) * (y2 - y3);
+    c = (x3 - x1) * (x3 - x1) + (y3 - y1) * (y3 - y1);
+    n_a = sqrt(c / b);
+    n_b = sqrt(a / c);
+    n_c = sqrt(b / a);
+    cord(x1, y1, x2, y2, n_a);
+    cord(x2, y2, x3, y3, n_b);
+    cord(x3, y3, x1, y1, n_c);
+    return 0;
+}
