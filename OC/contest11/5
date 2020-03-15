@@ -1,0 +1,48 @@
+#include <unistd.h>
+#include <stdio.h>
+#include <signal.h>
+#include <stdlib.h>
+#include <math.h>
+
+volatile int count = 0, prime_num = 0;
+
+void
+handler(int s) {
+    if (s == SIGTERM || (count == 3 && s == SIGINT)) {
+        exit(0);
+    } else if (s == SIGINT && count < 3) {
+        count++;
+        printf("%d\n", prime_num);
+        fflush(stdout);
+    }
+}
+
+int
+prime(int k) {
+    if (k == 1) {
+        return 0;
+    }
+    for (int i = 2; i <= sqrt(k); i++) {
+        if (!(k % i)) {
+            return 0;
+        }
+    }
+    return 1;
+}
+int
+main(int argc, const char * argv[]) {
+    sigaction(SIGINT, &(struct sigaction) { .sa_handler = handler, .sa_flags = SA_RESTART }, NULL);
+    sigaction(SIGTERM, &(struct sigaction) { .sa_handler = handler, .sa_flags = SA_RESTART }, NULL);
+    int low, high;
+    scanf("%d %d", &low, &high);
+    printf("%d\n", getpid());
+    fflush(stdout);
+    for (int i = low; i < high; i++) {
+        if (prime(i)) {
+            prime_num = i;
+        }
+    }
+    printf("-1\n");
+    fflush(stdout);
+    return 0;
+}
