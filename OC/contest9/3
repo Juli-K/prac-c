@@ -1,0 +1,23 @@
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/wait.h>
+
+int
+func(const char *arg) {
+    int pid, status, res;
+    if (!(pid = fork())) {
+        execlp(arg, arg, NULL);
+        _exit(1);
+    }
+    wait(&status);
+    res = WIFEXITED(status) && !WEXITSTATUS(status);
+    return res;
+}
+int
+main(int argc, const char * argv[]) {
+    if (argc != 4) {
+        _exit(1);
+    }
+    int result = !((func(argv[1]) || func(argv[2])) && func(argv[3]));
+    return result;
+}
