@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <string.h>
+int
+main(void)
+{/*
+    long long a, b, c;
+    long long c_left, c_right;
+    scanf("%lld%lld", &a, &b);
+    if (a >= 0) {
+        c_left = a - a % b;
+        c_right = c_left + b;
+    } else {
+        c_right = a - a % b;
+        c_left = c_right - b;
+    }
+    if (c_right > INT_MAX) {
+        c = c_left;
+    } else if (c_left < INT_MIN) {
+        c = c_right;
+    } else {
+        if (llabs(a - c_right) <= llabs(a - c_left)) {
+            c = c_right;
+        } else {
+            c = c_left;
+        }
+    }
+    printf("%lld\n", c);*/
+    char s[] = "2fs\n";
+    size_t len = strlen(s);
+    printf("%d\n", len);
+    return 0;
+}
