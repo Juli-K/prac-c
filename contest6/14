@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct list
+{
+    int key;
+    struct list * next;
+};
+int LenList(struct list * head)
+{
+    int kol = 0;
+    struct list *p;
+    p = head;
+    while(p)
+    {
+        kol++;
+        p = p->next;
+    }
+    return kol;
+}
+void Split(struct list *head, struct lest ** a, struct list **b)
+{
+    struct list *tmp = head;
+    int len = LenList(head), i = 0;
+    if (len <= 1)
+    {
+        *a = head;
+        *b = NULL;
+    }
+    else
+    {
+        int mid = (len - 1) / 2;
+        while(i < len)
+        {
+            tmp = tmp->next;
+            i++;
+        }
+        *a = head;
+        *b = tmp->next;
+        tmp->next = NULL;
+    }
+}
+struct list * Sort_merge(struct list *a, struct list *b)
+{
+    struct list *rez = NULL;
+    if (!a) return b;
+    else if (!b) return a;
+    if (a->key <= b->key)
+    {
+        rez = a;
+        rez->next = Sort_merge(a->next, b);
+    }
+    else
+    {
+        rez = b;
+        rez->next = Sort_merge(a, b->next);
+    }
+    return rez;
+}
+void sort(struct list ** rez)
+{
+    struct list *head = *rez;
+    struct list *a, *b;
+    if (!head || !head->next) return;
+    Split(head, &a, &b);
+    sort(&a);
+    sort(&b);
+    *rez = Sort_merge(a, b);
+}
+int main(void)
+{
+    FILE * fin = fopen("input.txt", "r");
+    int num;
+    struct list * p, *head;
+    p = malloc(sizeof(struct list));
+    p->next = NULL;
+    head = p;
+    if(fscanf(fin, "%d", &num)!=1){
+        fclose(fin);
+        free(p);
+        return 0;
+    }
+    p->key = num;
+    while (fscanf(fin, "%d", &num) == 1)
+    {
+        struct list *tmp;
+        tmp = malloc(sizeof(struct list));
+        tmp->key = num;
+        tmp->next = p;
+        head = tmp;
+        p = head;
+    }
+    fclose(fin);
+    sort(&p);
+    FILE *fout = fopen("output.txt", "w");
+    while (p != NULL)
+    {
+        fprintf (fout, "%d ", p->key);
+        p = p->next;
+    }
+    fclose(fout);
+    
+    return 0;
+}
