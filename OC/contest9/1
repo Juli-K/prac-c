@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/wait.h>
+#include <sys/types.h>
+#include <stdlib.h>
+int
+main(int argc, const char * argv[]) {
+    if (argc != 5) {
+        exit(1);
+    }
+    int status, pid;
+    if (!(pid = fork())) {
+        int fd1 = open(argv[2], O_RDONLY);
+        dup2(fd1, 0);
+        int fd2 = open(argv[3], O_RDWR | O_CREAT | O_APPEND, 0660);
+        dup2(fd2, 1);
+        int fd3 = open(argv[4], O_RDWR | O_CREAT | O_TRUNC, 0660);
+        dup2(fd3, 2);
+        close(fd1);
+        close(fd2);
+        close(fd3);
+        execlp(argv[1], argv[1], NULL);
+        printf("*\n");
+        _exit(42);
+    }
+    wait(&status);
+    printf("%d\n", status);
+    return 0;
+}
