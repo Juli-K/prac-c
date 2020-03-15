@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct list
+{
+    int key;
+    struct list *next;
+};
+
+int main(void )
+{
+    
+    FILE *f = fopen("input.txt", "r");
+    int num;
+    struct list *p = NULL;
+    struct list *head = NULL;
+    p = malloc(sizeof(struct list));
+    p->next = NULL;
+    head = p;
+    fscanf(f, "%d", &num);
+    while (num != -1)
+    {
+        p->key = num;
+        p->next = malloc(sizeof(struct list));
+        p->next->next = NULL;
+        p = p->next;
+        fscanf(f, "%d", &num);
+    }
+    p -> key = -1;
+    fscanf (f,"%d", &num);
+    struct list  *q;
+    p = head;
+    q = NULL;
+    while (num != -1)
+    {
+        while (p != NULL)
+        {
+            while (p != NULL && p->key != num)
+            {
+                q = p;
+                p = p->next;
+                
+            }
+            if (p == NULL)
+            {
+                q = NULL;
+                break;
+            }
+            if (q)
+            {
+                q->next = p->next;
+                free(p);
+                p = q->next;
+                continue;
+            }
+            else
+            {
+                head = p->next;
+                free(p);
+                p = head;
+                q = NULL;
+                continue;
+            }
+        }
+        q = NULL;
+        fscanf(f, "%d", &num);
+        p = head;
+    }
+    p = head;
+    FILE *ff = fopen("output.txt", "w");
+    while (p->next != NULL)
+    {
+        fprintf (ff, "%d ", p->key);
+        p=p->next;
+    }
+    p = head;
+    while (p->next!= NULL)
+    {
+        head = p->next;
+        free(p);
+        p = head;
+    }
+    free(p);
+    fclose(f);
+    fclose(ff);
+    return 0;
+}
+
+
+
