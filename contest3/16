@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned int power(unsigned int x, unsigned int n){
+    if (n == 0)
+        return 1;
+    if (n % 2 == 0)
+    {
+        unsigned int tmp = power(x, n / 2);
+        return (tmp * tmp);
+    }
+    else
+    {
+        unsigned int tmp = power(x, n / 2);
+        return (tmp * tmp * x);
+    }
+}
+ unsigned int modul(unsigned int x, unsigned int n, unsigned int m){
+    if (n == 0)
+        return 1;
+    if (n % 2 == 0)
+    {
+        unsigned int tmp = modul(x, n / 2, m);
+        return (tmp * tmp % m);
+    }
+    else
+    {
+        unsigned int tmp = modul(x, n / 2, m);
+        return (tmp * tmp * x % m);
+    }
+}
+
+int main(void)
+{
+    unsigned int a, b, c, m, rez, max = 0;
+    scanf ("%u%u%u%u", &a, &b, &c, &m);
+    rez = modul(a, power(b, c), m);
+
+    if ( rez > max)
+        max = rez ;
+    rez = modul(a, power(c, b), m);
+    if ( rez > max)
+        max = rez;
+    rez = modul(b, power(a, c), m);
+    if ( rez > max)
+        max = rez;
+    rez = modul(b, power(c, a), m);
+    if ( rez > max)
+        max = rez;
+    rez = modul(c, power(b, a), m);
+    if ( rez > max)
+        max = rez;
+    rez = modul(c, power(a, b), m);
+    if (rez > max)
+        max = rez;
+    printf ("%u", max);
+    return 0;
+}
