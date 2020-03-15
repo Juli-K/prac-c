@@ -1,0 +1,76 @@
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/wait.h>
+
+void
+ping_pong(FILE *fr, FILE *fw, int max_num, int pid) {
+    int num;
+    while (fscanf(fr, "%d", &num) != EOF && num < max_num) {
+        printf("%d %d\n", pid, num);
+        fflush(stdout);
+        num++;
+        fprintf(fw, "%d\n", num);
+        fflush(fw);
+    }
+    fclose(fw);
+    fclose(fr);
+}
+int
+main(int argc, const char * argv[]) {
+    if (argc == 1) {
+        exit(0);
+    }
+    int fd1[2], fd2[2];
+    int n = 1, max_n;
+    sscanf(argv[1], "%d", &max_n);
+    pipe(fd1);
+    pipe(fd2);
+    FILE *fr1, *fw1;
+    fr1 = fdopen(fd1[0], "r");
+    fw1 = fdopen(fd1[1], "w");
+    FILE *fr2, *fw2;
+    fr2 = fdopen(fd2[0], "r");
+    fw2 = fdopen(fd2[1], "w");
+    fprintf(fw1, "%d\n", n);
+    fflush(fw1);
+    int pid1 = fork();
+    if (pid1 < 0) {
+        exit(1);
+    }
+    if (!pid1) {
+        close(fd1[1]);
+        close(fd2[0]);
+        fclose(fw1);
+        fclose(fr2);
+        ping_pong(fr1, fw2, max_n, 1);
+        close(fd1[0]);
+        close(fd2[1]);
+        _exit(0);
+    }
+    int pid2 = fork();
+    if (pid2 < 0) {
+        exit(1);
+    }
+    if (!pid2) {
+        close(fd2[1]);
+        close(fd1[0]);
+        fclose(fw2);
+        fclose(fr1);
+        ping_pong(fr2, fw1, max_n, 2);
+        close(fd1[1]);
+        close(fd2[0]);
+        _exit(0);
+    }
+    fclose(fw1);
+    fclose(fr2);
+    fclose(fw2);
+    fclose(fr1);
+    close(fd1[1]);
+    close(fd2[1]);
+    close(fd2[0]);
+    close(fd1[0]);
+    while (wait(NULL) != -1);
+    printf("Done\n");
+    return 0;
+}
