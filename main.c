@@ -1,70 +1,48 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
-int n;
 
 int main(void)
 {
-    scanf("%d", &n);
-    double *x, **a;
-    x = calloc(n, sizeof(double));
-    a = calloc(n, sizeof(double));
+    int n;
+    scanf ("%d", &n);
+    long int **p;
+    p = calloc(n, sizeof(long int*));
     for (int i = 0; i < n; i++)
-    {
-        a[i] = calloc(n + 1, sizeof(double*));
-        for (int j = 0; j < n + 1; j++)
-            scanf("%lf", &a[i][j]);
-    }
-    int i_max = 0;
-    double max;
+        p[i] = calloc(2 * n, sizeof(long int));
     for (int i = 0; i < n; i++)
-    {
-        max = abs(a[i][i]);
-        i_max = i;
-        for (int j = i + 1; j < n; j++)
+        for (int j = 0; j < 2 * n; j++)
+            scanf("%ld", &p[i][j]);
+    for (int i = 0; i < n; i++)
+      {
+
+        for (int j = 2 * i; j < (2 * n); j += 2)
         {
-            int flag = 0;
-            if (a[j][i] > max)
+            if (2 * i == j)
             {
-                i_max = j;
-                max = a[j][i];
-                flag = 1;
+                p[i][j + 1] = -p[i][j + 1];
+
             }
-            if (flag)
+            else if (2 * i != j)
             {
-                for (int k = 0; k <= n; k++)
-                {
-                    double tmp = a[i][k];
-                    a[i][k] = a[i_max][k];
-                    a[i_max][k] = tmp;
-                }
+
+                long int tmp = p[i][j];
+                p[i][j] = p[j / 2][2 * i];
+                p[j / 2][2 * i] = tmp;
+                tmp = p[i][j + 1];
+                p[i][j + 1] = -p[j / 2][i * 2 + 1];
+                p[j / 2][i * 2 + 1] = -tmp;
+
             }
         }
-        for (int k = i; k < n; k++)
-        {
-            double tmp = a[k][i];
-            if ((long int)(tmp*1000000000000) == 0)
-                continue;
-            for (int j = 0; j < n + 1; j++)
-                a[k][j] = a[k][j] / tmp;
-            if (k == i)
-                continue;
-            for (int j = 0; j < n + 1; j++)
-                a[k][j] -= a[i][j];
-        }
-    }
-    for (int k = n - 1; k >= 0; k--)
-    {
-        x[k] = a[k][n];
-        for (int i = 0; i < k; i++)
-            a[i][n] -= a[i][k] * x[k];
-    }
+      }
     for (int i = 0; i < n; i++)
-        printf("%0.f\n", round(x[i]));
+    {
+        for (int j = 0; j < 2 * n; j++)
+            printf ("%ld ", p[i][j]);
+        printf ("\n");
+    }
     for (int i = n - 1; i >= 0; i--)
-        free(a[i]);
-    free(a);
-    free(x);
+        free(p[i]);
+    free(p);
     return 0;
 }
-
