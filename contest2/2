@@ -1,0 +1,18 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void)
+{
+    int mas[10000], n = 0;
+    scanf ("%d", &mas[0]);
+    while (mas[n] != 0)
+    {
+        n++;
+        scanf ("%d", &mas[n]);
+    }
+    for (int i=0; i < n ; i +=2)
+        printf ("%d ", mas[i]);
+    for (int i = n - (n  % 2 ) - 1; i >= 0 ; i -=2)
+        printf ("%d ", mas[i]);
+    return 0;
+}
