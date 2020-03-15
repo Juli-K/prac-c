@@ -1,0 +1,46 @@
+#include <stdlib.h>
+struct Pair
+{
+    int key;
+    int value;
+};
+
+int
+compare(const void *n1, const void *n2) {
+    struct Pair *k1 = (struct Pair *)n1;
+    struct Pair *k2 = (struct Pair *)n2;
+    if (k1->key > k2->key) {
+        return 1;
+    }
+    if (k1->key < k2->key) {
+        return -1;
+    }
+    if (k1->value > k2->value) {
+        return 1;
+    }
+    if (k1->value < k2->value) {
+        return -1;
+    }
+    return 0;
+}
+
+void
+process(struct Pair *data, size_t size) {
+    int *arr;
+    arr = calloc(size, sizeof(*arr));
+    if (!arr) {
+        return;
+    }
+    for (int i = 0; i < size; i++) {
+        arr[i] = data[i].value;
+    }
+    for (int i = 0; i < size; i++) {
+        data[i].value = i;
+    }
+    qsort(data, size, sizeof(*data), compare);
+    for (int i = 0; i < size; i++) {
+        data[i].value = arr[data[i].value];
+    }
+    free(arr);
+}
+
