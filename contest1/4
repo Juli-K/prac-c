@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void)
+{
+    double min1, max1, max2, min2, tmp;
+    scanf ("%f %f %f %f", &max1, &min1, &max2, &min2);
+    if (max1 > min1)
+    {
+        tmp = max1;
+        max1 = min1;
+        min1 = tmp;
+    }
+    if ( max2 > min2)
+    {
+        tmp = max2;
+        max2 = min2;
+        min2 = tmp;
+    }
+    if (max2 <= max1 && min2 <= min1)
+        printf ("YES");
+    else printf ("NO");
+    return 0;
+}
