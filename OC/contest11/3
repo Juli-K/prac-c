@@ -1,0 +1,44 @@
+#include <signal.h>
+#include <stdio.h>
+#include <limits.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/wait.h>
+#include <stdlib.h>
+#include <string.h>
+
+int
+main(int argc, const char * argv[]) {
+    int n, kol = 0, status;
+    sscanf(argv[1], "%d", &n);
+    for (int i = 2; i < argc; i++) {
+        if (i >= n + 1) {
+            while (wait(&status) != -1) {
+                if (WIFEXITED(status) && !WEXITSTATUS(status)) {
+                    kol++;
+                }
+            }
+        }
+        FILE *f = fopen(argv[i], "r");
+        char name[NAME_MAX + 1];
+        fgets(name, NAME_MAX + 1, f);
+        name[strlen(name) - 1] = 0;
+        fclose(f);
+        int pid = fork();
+        if (pid < 0) {
+            exit(1);
+        }
+        if (!pid) {
+            execlp(name, name, NULL);
+            _exit(1);
+        }
+    }
+    while (wait(&status) != -1) {
+        if (WIFEXITED(status) && !WEXITSTATUS(status)) {
+            kol++;
+        }
+    }
+    printf("%d\n", kol);
+    fflush(stdout);
+    return 0;
+}
